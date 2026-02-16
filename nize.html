@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقديم سيرفر ماين كرافت</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* خلفية متحركة */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* الصفحة الرئيسية */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .server-logo {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #00d4ff, #7b2cbf);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+            animation: float 3s ease-in-out infinite;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .server-name {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .server-desc {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 40px;
+        }
+
+        .start-btn {
+            padding: 20px 60px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #00d4ff, #7b2cbf);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.6);
+        }
+
+        /* اختيار المنصة */
+        .platform-selection {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .platform-title {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .platform-cards {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .platform-card {
+            width: 280px;
+            height: 350px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s;
+            border: 2px solid transparent;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .platform-card:hover::before {
+            opacity: 1;
+        }
+
+        .platform-card.mobile {
+            border-color: #00ff88;
+        }
+
+        .platform-card.mobile:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 255, 136, 0.3);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .platform-card.playstation {
+            border-color: #0070f3;
+        }
+
+        .platform-card.playstation:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 112, 243, 0.3);
+            background: rgba(0, 112, 243, 0.1);
+        }
+
+        .platform-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .platform-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        /* النماذج */
+        .form-container {
+            display: none;
+            min-height: 100vh;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-header h2 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .mobile-badge {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+
+        .playstation-badge {
+            background: rgba(0, 112, 243, 0.2);
+            color: #0070f3;
+            border: 1px solid #0070f3;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 1rem;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .form-group.mobile-form input:focus,
+        .form-group.mobile-form select:focus,
+        .form-group.mobile-form textarea:focus {
+            border-color: #00ff88;
+        }
+
+        .form-group.playstation-form input:focus,
+        .form-group.playstation-form select:focus,
+        .form-group.playstation-form textarea:focus {
+            border-color: #0070f3;
+        }
+
+        .age-warning {
+            display: none;
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Tajawal', sans-serif;
+            margin-top: 20px;
+        }
+
+        .submit-btn.mobile-submit {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #000;
+        }
+
+        .submit-btn.playstation-submit {
+            background: linear-gradient(45deg, #0070f3, #0051a8);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* رسالة النجاح */
+        .success-message {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            animation: scaleIn 0.5s;
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .success-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .success-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: white;
+        }
+
+        /* عداد اللاعبين */
+        .player-count {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* تأثيرات إضافية */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            animation: float-particle 10s infinite;
+        }
+
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .server-name { font-size: 2.5rem; }
+            .platform-card { width: 100%; max-width: 300px; }
+            .form-container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- خلفية متحركة -->
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- عداد اللاعبين -->
+    <div class="player-count">
+        <div class="online-dot"></div>
+        <span>👥 <span id="onlinePlayers">127</span> لاعب متصل</span>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <section class="hero" id="hero">
+        <div class="server-logo">⛏️</div>
+        <h1 class="server-name">سيرفرك هنا</h1>
+        <p class="server-desc">سيرفر بيدروك احترافي - رول بلاي - بقاء - مغامرات</p>
+        <button class="start-btn" onclick="showPlatformSelection()">قدّم الآن 🚀</button>
+    </section>
+
+    <!-- اختيار المنصة -->
+    <section class="platform-selection" id="platformSelection">
+        <h2 class="platform-title">🎮 اختر منصتك</h2>
+        <div class="platform-cards">
+            <div class="platform-card mobile" onclick="showForm('mobile')">
+                <div class="platform-icon">📱</div>
+                <div class="platform-name">جوال</div>
+            </div>
+            <div class="platform-card playstation" onclick="showForm('playstation')">
+                <div class="platform-icon">🕹️</div>
+                <div class="platform-name">سوني</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج الجوال -->
+    <div class="form-container" id="mobileForm">
+        <div class="form-header">
+            <h2>📱 نموذج تقديم - الجوال</h2>
+            <span class="platform-badge mobile-badge">MCPE / Android / iOS</span>
+        </div>
+        <form id="mobileFormElement" onsubmit="submitForm(event, 'mobile')">
+            <div class="form-group mobile-form">
+                <label>اسم اللاعب *</label>
+                <input type="text" name="playerName" required placeholder="اكتب اسمك في اللعبة">
+            </div>
+            <div class="form-group mobile-form">
+                <label>العمر *</label>
+                <input type="number" name="age" id="mobileAge" required min="10" max="50" placeholder="عمرك" onchange="checkAge('mobile')">
+            </div>
+            <div class="age-warning" id="mobileAgeWarning">
+                ⚠️ تنبيه: عمرك أقل من 13 سنة. يرجى مراجعة قوانين السيرفر مع الإدارة قبل المتابعة.
+            </div>
+            <div class="form-group mobile-form">
+                <label>اليوزر في ماين كرافت (Xbox Live) *</label>
+                <input type="text" name="xboxUser" required placeholder="مثال: PlayerName123">
+            </div>
+            <div class="form-group mobile-form">
+                <label>كم لك تلعب ماين كرافت؟ *</label>
+                <select name="experience" required>
+                    <option value="">اختر...</option>
+                    <option value="less_than_year">أقل من سنة</option>
+                    <option value="1-3_years">من سنة إلى 3 سنوات</option>
+                    <option value="more_than_3">أكثر من 3 سنوات</option>
+                </select>
+            </div>
+            <div class="form-group mobile-form">
+                <label>كم ساعة تقدر تتفاعل يوميًا؟ *</label>
+                <select name="activityHours" required>
+                    <option value="">اختر...</option>
+                    <option value="1-2">1-2 ساعات</option>
+                    <option value="3-5">3-5 ساعات</option>
+                    <option value="more_than_5">أكثر من 5 ساعات</option>
+                </select>
+            </div>
+            <div class="form-group mobile-form">
+                <label>ليه نختارك؟ اكتب نبذة عنك *</label>
+                <textarea name="whyYou" rows="4" required placeholder="اخبرنا عن مهاراتك وشخصيتك في اللعبة..."></textarea>
+            </div>
+            <div class="form-group mobile-form">
+                <label>هل عندك خبرة إدارة سيرفرات؟</label>
+                <select name="adminExperience">
+                    <option value="no">لا</option>
+                    <option value="yes">نعم</option>
+                    <option value="helper">كنت مساعد (Helper)</option>
+                </select>
+            </div>
+            <button type="submit" class="submit-btn mobile-submit">إرسال الطلب ✅</button>
+        </form>
+    </div>
+
+    <!-- نموذج السوني -->
+    <div class="form-container" id="playstationForm">
+        <div class="form-header">
+            <h2>🕹️ نموذج تقديم - سوني</h2>
+            <span class="platform-badge playstation-badge">PS4 / PS5</span>
+        </div>
+        <form id="playstationFormElement" onsubmit="submitForm(event, 'playstation')">
+            <div class="form-group playstation-form">
+                <label>اسمك في البلايستيشن (PSN) *</label>
+                <input type="text" name="psnName" required placeholder="مثال: Gamer_KSA_2024">
+            </div>
+            <div class="form-group playstation-form">
+                <label>العمر *</label>
+                <input type="number" name="age" id="psAge" required min="10" max="50" placeholder="عمرك" onchange="checkAge('playstation')">
+            </div>
+            <div class="age-warning" id="psAgeWarning">
+                ⚠️ تنبيه: عمرك أقل من 13 سنة. يرجى مراجعة قوانين السيرفر مع الإدارة قبل المتابعة.
+            </div>
+            <div class="form-group playstation-form">
+                <label>هل تقدر تستخدم ديسكورد؟ *</label>
+                <select name="hasDiscord" required>
+                    <option value="">اختر...</option>
+                    <option value="yes">نعم، عندي حساب وأستخدمه</option>
+                    <option value="can_download">أقدر أحمله على الجوال</option>
+                    <option value="no">لا أقدر</option>
+                </select>
+            </div>
+            <div class="form-group playstation-form">
+                <label>هل تعرف تضيف سيرفرات بيدروك يدويًا؟ *</label>
+                <select name="knowsHowToAdd" required>
+                    <option value="">اختر...</option>
+                    <option value="yes">نعم، أعرف الطريقة</option>
+                    <option value="need_help">أحتاج شرح بسيط</option>
+                    <option value="no">لا أعرف</option>
+                </select>
+            </div>
+            <div class="form-group playstation-form">
+                <label>اتصالك بالنت ثابت؟ *</label>
+                <select name="connection" required>
+                    <option value="">اختر...</option>
+                    <option value="excellent">ممتاز ( fiber / 5G )</option>
+                    <option value="good">جيد ( 4G / ADSL )</option>
+                    <option value="average">متوسط</option>
+                </select>
+            </div>
+            <div class="form-group playstation-form">
+                <label>كم تقدر تدخل أسبوعيًا؟ *</label>
+                <select name="weeklyHours" required>
+                    <option value="">اختر...</option>
+                    <option value="1-3_days">1-3 أيام</option>
+                    <option value="4-5_days">4-5 أيام</option>
+                    <option value="daily">كل يوم</option>
+                </select>
+            </div>
+            <div class="form-group playstation-form">
+                <label>هل عندك خبرة في قوانين السيرفرات؟ *</label>
+                <select name="rulesExperience" required>
+                    <option value="">اختر...</option>
+                    <option value="yes">نعم، لعبت بسيرفرات رول بلاي قبل</option>
+                    <option value="some">سمعت عنها بس</option>
+                    <option value="no">لا، أول مرة</option>
+                </select>
+            </div>
+            <div class="form-group playstation-form">
+                <label>ملاحظات إضافية</label>
+                <textarea name="notes" rows="3" placeholder="أي شيء تبي تضيفه..."></textarea>
+            </div>
+            <button type="submit" class="submit-btn playstation-submit">إرسال الطلب ✨</button>
+        </form>
+    </div>
+
+    <!-- رسالة النجاح -->
+    <div class="success-message" id="successMessage">
+        <div class="success-icon">🚀</div>
+        <h2 class="success-text">طلبك وصل للإدارة!</h2>
+        <p style="font-size: 1.2rem; color: rgba(255,255,255,0.8);">بنراجع تقديمك قريب ونتواصل معاك<br>شكراً لاهتمامك بالانضمام لسيرفرنا 💎</p>
+        <button class="back-btn" onclick="resetForm()">العودة للرئيسية</button>
+    </div>
+
+    <script>
+        // إنشاء جزيئات متحركة
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // تحديث عداد اللاعبين (محاكاة)
+        function updatePlayerCount() {
+            const count = document.getElementById('onlinePlayers');
+            let current = parseInt(count.textContent);
+            const change = Math.floor(Math.random() * 5) - 2;
+            current += change;
+            if (current < 50) current = 50;
+            if (current > 200) current = 200;
+            count.textContent = current;
+        }
+        setInterval(updatePlayerCount, 5000);
+
+        // التنقل بين الصفحات
+        function showPlatformSelection() {
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('platformSelection').style.display = 'flex';
+        }
+
+        function showForm(platform) {
+            document.getElementById('platformSelection').style.display = 'none';
+            if (platform === 'mobile') {
+                document.getElementById('mobileForm').style.display = 'block';
+            } else {
+                document.getElementById('playstationForm').style.display = 'block';
+            }
+        }
+
+        // التحقق من العمر
+        function checkAge(platform) {
+            const ageInput = document.getElementById(platform === 'mobile' ? 'mobileAge' : 'psAge');
+            const warning = document.getElementById(platform === 'mobile' ? 'mobileAgeWarning' : 'psAgeWarning');
+            if (parseInt(ageInput.value) < 13) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        }
+
+        // إرسال النموذج
+        async function submitForm(event, platform) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+            
+            // إضافة معلومات إضافية
+            data.platform = platform;
+            data.timestamp = new Date().toLocaleString('ar-SA');
+            
+            // هنا تحط رابط الويبهوك حقك من الديسكورد
+            const WEBHOOK_URL = 'https://discord.com/api/webhooks/1472911384793583637/_0RUKULCHXS-bfqHN5K3TA8Ae3ujxC3sMBzDwHEh-dEKVsSDXFtlA7CHFSLKy_8tXQjT';
+            
+            // تجهيز الرسالة للديسكورد
+            const embed = {
+                title: `🎮 طلب انضمام جديد - ${platform === 'mobile' ? '📱 جوال' : '🕹️ سوني'}`,
+                color: platform === 'mobile' ? 0x00ff88 : 0x0070f3,
+                fields: [],
+                timestamp: new Date().toISOString()
+            };
+
+            // إضافة الحقول حسب المنصة
+            if (platform === 'mobile') {
+                embed.fields = [
+                    { name: '👤 اسم اللاعب', value: data.playerName, inline: true },
+                    { name: '🎂 العمر', value: data.age, inline: true },
+                    { name: '🆔 Xbox User', value: data.xboxUser, inline: true },
+                    { name: '⏱️ خبرة اللعب', value: data.experience, inline: true },
+                    { name: '⏰ ساعات التفاعل', value: data.activityHours, inline: true },
+                    { name: '🛡️ خبرة الإدارة', value: data.adminExperience, inline: true },
+                    { name: '💬 لماذا نختاره', value: data.whyYou, inline: false }
+                ];
+            } else {
+                embed.fields = [
+                    { name: '🆔 PSN Name', value: data.psnName, inline: true },
+                    { name: '🎂 العمر', value: data.age, inline: true },
+                    { name: '💬 الديسكورد', value: data.hasDiscord, inline: true },
+                    { name: '🔗 إضافة السيرفر', value: data.knowsHowToAdd, inline: true },
+                    { name: '📶 الاتصال', value: data.connection, inline: true },
+                    { name: '📅 الدخول الأسبوعي', value: data.weeklyHours, inline: true },
+                    { name: '📋 خبرة القوانين', value: data.rulesExperience, inline: true },
+                    { name: '📝 ملاحظات', value: data.notes || 'لا يوجد', inline: false }
+                ];
+            }
+
+            try {
+                // إرسال للديسكورد
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ embeds: [embed] })
+                });
+
+                if (response.ok) {
+                    // إظهار رسالة النجاح
+                    document.getElementById('mobileForm').style.display = 'none';
+                    document.getElementById('playstationForm').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'flex';
+                    form.reset();
+                } else {
+                    alert('حدث خطأ في الإرسال، حاول مرة أخرى');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // للتجربة بدون ويبهوك:
+                document.getElementById('mobileForm').style.display = 'none';
+                document.getElementById('playstationForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'flex';
+                form.reset();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('hero').style.display = 'flex';
+            document.getElementById('platformSelection').style.display = 'none';
+            document.getElementById('mobileForm').style.display = 'none';
+            document.getElementById('playstationForm').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
