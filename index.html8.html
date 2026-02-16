@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تقديم سيرفر ماين كرافت</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mobile: #00e676;
+            --playstation: #0066cc;
+            --xbox: #00bc00;
+            --pc: #ff6d00;
+            --danger: #ff1744;
+            --warning: #ffc400;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #0a0a0f;
+            min-height: 100vh;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* خلفية محسّنة */
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .bg-stars {
+            z-index: -3;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.7), transparent);
+            background-size: 200px 200px;
+            animation: starsMove 100s linear infinite;
+        }
+
+        @keyframes starsMove {
+            from { transform: translateY(0); }
+            to { transform: translateY(-200px); }
+        }
+
+        .bg-glow {
+            z-index: -2;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 230, 118, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 102, 204, 0.08) 0%, transparent 40%);
+        }
+
+        /* شريط علوي */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--mobile), var(--playstation));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--mobile);
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* الصفحات الرئيسية */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 100px 20px 40px;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* الصفحة الرئيسية */
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+            border: 1px solid rgba(255,215,0,0.3);
+            color: #ffd700;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .main-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, var(--mobile));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero-desc {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .feature-tag {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 50px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--mobile), #00b248);
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 230, 118, 0.3);
+        }
+
+        /* اختيار المنصة */
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .platform-card {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid transparent;
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .platform-card:hover::before {
+            opacity: 1;
+        }
+
+        .platform-card.mobile { border-color: var(--mobile); }
+        .platform-card.mobile:hover { 
+            background: rgba(0, 230, 118, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .platform-card.playstation { border-color: var(--playstation); }
+        .platform-card.playstation:hover { 
+            background: rgba(0, 102, 204, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .platform-card.xbox { border-color: var(--xbox); }
+        .platform-card.xbox:hover { 
+            background: rgba(0, 188, 0, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .platform-card.pc { border-color: var(--pc); }
+        .platform-card.pc:hover { 
+            background: rgba(255, 109, 0, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .plat-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+        }
+
+        .mobile .plat-icon { background: rgba(0,230,118,0.15); }
+        .playstation .plat-icon { background: rgba(0,102,204,0.15); }
+        .xbox .plat-icon { background: rgba(0,188,0,0.15); }
+        .pc .plat-icon { background: rgba(255,109,0,0.15); }
+
+        .plat-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .plat-type {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+
+        /* النماذج */
+        .form-container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 30px;
+            overflow: hidden;
+        }
+
+        .form-header {
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .form-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin: 0 auto 15px;
+        }
+
+        .mobile .form-icon { background: linear-gradient(135deg, var(--mobile), rgba(0,230,118,0.3)); }
+        .playstation .form-icon { background: linear-gradient(135deg, var(--playstation), rgba(0,102,204,0.3)); }
+        .xbox .form-icon { background: linear-gradient(135deg, var(--xbox), rgba(0,188,0,0.3)); }
+        .pc .form-icon { background: linear-gradient(135deg, var(--pc), rgba(255,109,0,0.3)); }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .form-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .mobile-badge { background: rgba(0,230,118,0.15); color: var(--mobile); }
+        .playstation-badge { background: rgba(0,102,204,0.15); color: var(--playstation); }
+        .xbox-badge { background: rgba(0,188,0,0.15); color: var(--xbox); }
+        .pc-badge { background: rgba(255,109,0,0.15); color: var(--pc); }
+
+        .form-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            background: rgba(0,0,0,0.2);
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .mobile-form .form-input:focus,
+        .mobile-form .form-select:focus { border-color: var(--mobile); }
+
+        .playstation-form .form-input:focus,
+        .playstation-form .form-select:focus { border-color: var(--playstation); }
+
+        .xbox-form .form-input:focus,
+        .xbox-form .form-select:focus { border-color: var(--xbox); }
+
+        .pc-form .form-input:focus,
+        .pc-form .form-select:focus { border-color: var(--pc); }
+
+        .age-alert {
+            display: none;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: var(--warning);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .age-alert.show {
+            display: block;
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Tajawal', sans-serif;
+            margin-top: 10px;
+        }
+
+        .mobile-submit { background: var(--mobile); color: #000; }
+        .playstation-submit { background: var(--playstation); color: #fff; }
+        .xbox-submit { background: var(--xbox); color: #fff; }
+        .pc-submit { background: var(--pc); color: #fff; }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* نتائج */
+        .result-container {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 30px;
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .result-title {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .result-text {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .success .result-icon,
+        .success .result-title { color: var(--mobile); }
+
+        .reject .result-icon,
+        .reject .result-title { color: var(--danger); }
+
+        .btn-secondary {
+            padding: 15px 35px;
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        /* تحميل */
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--mobile);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* إشعار */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.9);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 30px;
+            border-radius: 10px;
+            z-index: 6000;
+            opacity: 0;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* أخطاء */
+        .error-field {
+            border-color: var(--danger) !important;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 2.5rem; }
+            .platforms-grid { grid-template-columns: 1fr; }
+            .form-container { margin: 0 -10px; border-radius: 20px; }
+            .header { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- خلفيات -->
+    <div class="bg-layer bg-stars"></div>
+    <div class="bg-layer bg-glow"></div>
+
+    <!-- شريط علوي -->
+    <header class="header">
+        <div class="brand">
+            <div class="brand-icon">⛏️</div>
+            <span>كرافت ليجيندز</span>
+        </div>
+        <div class="live-indicator">
+            <div class="live-dot"></div>
+            <span>متصل الآن: <strong id="onlineCount">142</strong></span>
+        </div>
+    </header>
+
+    <!-- الصفحة الرئيسية -->
+    <section class="page active" id="page-home">
+        <div class="hero-content">
+            <div class="hero-badge">✨ سيرفر رول بلاي احترافي</div>
+            <h1 class="main-title">انضم إلى مغامرتك القادمة</h1>
+            <p class="hero-desc">
+                سيرفر ماين كرافت بيدروك متكامل يجمع بين الإثارة والتنظيم. 
+                قدم طلبك الآن وكن جزءاً من مجتمعنا المميز.
+            </p>
+            <div class="features">
+                <span class="feature-tag">⚡ أداء سلس</span>
+                <span class="feature-tag">🛡️ حماية 24/7</span>
+                <span class="feature-tag">🎉 فعاليات يومية</span>
+                <span class="feature-tag">👥 مجتمع ودي</span>
+            </div>
+            <button class="btn-primary" onclick="goToPage('platforms')">
+                ابدأ التقديم 🚀
+            </button>
+        </div>
+    </section>
+
+    <!-- اختيار المنصة -->
+    <section class="page" id="page-platforms">
+        <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 10px;">اختر منصتك</h2>
+        <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">دعم كامل لجميع المنصات</p>
+        
+        <div class="platforms-grid">
+            <div class="platform-card mobile" onclick="goToPage('form-mobile')">
+                <div class="plat-icon">📱</div>
+                <div class="plat-name">الجوال</div>
+                <div class="plat-type">Pocket Edition</div>
+            </div>
+            <div class="platform-card playstation" onclick="goToPage('form-playstation')">
+                <div class="plat-icon">🎮</div>
+                <div class="plat-name">بلايستيشن</div>
+                <div class="plat-type">PS4 / PS5</div>
+            </div>
+            <div class="platform-card xbox" onclick="goToPage('form-xbox')">
+                <div class="plat-icon">🎯</div>
+                <div class="plat-name">اكسبوكس</div>
+                <div class="plat-type">One / Series</div>
+            </div>
+            <div class="platform-card pc" onclick="goToPage('form-pc')">
+                <div class="plat-icon">🖥️</div>
+                <div class="plat-name">الكمبيوتر</div>
+                <div class="plat-type">Windows 10/11</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج الجوال -->
+    <section class="page" id="page-form-mobile">
+        <div class="form-container mobile">
+            <div class="form-header">
+                <div class="form-icon">📱</div>
+                <h2 class="form-title">تقديم اللاعبين المحمول</h2>
+                <span class="form-badge mobile-badge">Pocket Edition</span>
+            </div>
+            <div class="form-body">
+                <form id="form-mobile" onsubmit="handleSubmit(event, 'mobile')">
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">الاسم في اللعبة</label>
+                        <input type="text" class="form-input" name="playerName" required placeholder="اكتب اسمك" maxlength="20">
+                        <span class="error-message">الرجاء إدخال الاسم</span>
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">العمر</label>
+                        <input type="number" class="form-input" name="age" id="age-mobile" required min="8" max="99" placeholder="عمرك" onchange="checkAge('mobile')">
+                    </div>
+                    <div class="age-alert" id="alert-mobile">
+                        ⚠️ تنبيه: العمر أقل من 13 سنة - يتطلب موافقة ولي الأمر
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">حساب Xbox Live</label>
+                        <input type="text" class="form-input" name="xboxTag" required placeholder="Gamertag أو الإيميل">
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">الجهاز</label>
+                        <select class="form-select" name="device" required>
+                            <option value="">اختر جهازك...</option>
+                            <option value="Android">أندرويد</option>
+                            <option value="iOS">آيفون / آيباد</option>
+                        </select>
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">خبرة اللعب</label>
+                        <select class="form-select" name="experience" required>
+                            <option value="">اختر...</option>
+                            <option value="مبتدئ">مبتدئ (أقل من سنة)</option>
+                            <option value="متوسط">متوسط (1-3 سنوات)</option>
+                            <option value="خبير">خبير (أكثر من 3 سنوات)</option>
+                        </select>
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">لماذا تريد الانضمام؟</label>
+                        <textarea class="form-textarea" name="reason" rows="3" required placeholder="اخبرنا عن نفسك..." maxlength="500"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn mobile-submit" id="btn-mobile">
+                        إرسال الطلب
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج البلايستيشن -->
+    <section class="page" id="page-form-playstation">
+        <div class="form-container playstation">
+            <div class="form-header">
+                <div class="form-icon">🎮</div>
+                <h2 class="form-title">تقديم لاعبي بلايستيشن</h2>
+                <span class="form-badge playstation-badge">PS4 / PS5</span>
+            </div>
+            <div class="form-body">
+                <form id="form-playstation" onsubmit="handleSubmit(event, 'playstation')">
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">اسم PSN</label>
+                        <input type="text" class="form-input" name="psnName" required placeholder="معرفك في البلايستيشن">
+                    </div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">العمر</label>
+                        <input type="number" class="form-input" name="age" id="age-playstation" required min="8" max="99" placeholder="عمرك" onchange="checkAge('playstation')">
+                    </div>
+                    <div class="age-alert" id="alert-playstation">
+                        ⚠️ تنبيه: العمر أقل من 13 سنة - يتطلب موافقة ولي الأمر
+                    </div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">المنصة</label>
+                        <select class="form-select" name="console" required>
+                            <option value="">اختر...</option>
+                            <option value="PS4">PlayStation 4</option>
+                            <option value="PS5">PlayStation 5</option>
+                        </select>
+                    </div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">هل تستخدم Discord؟</label>
+                        <select class="form-select" name="discord" required>
+                            <option value="">اختر...</option>
+                            <option value="نعم">نعم بشكل يومي</option>
+                            <option value="أحياناً">أحياناً</option>
+                            <option value="يمكنني التحميل">يمكنني تحميله</option>
+                        </select>
+                    </div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">معرفة إضافة السيرفرات</label>
+                        <select class="form-select" name="serverKnowledge" required>
+                            <option value="">اختر...</option>
+                            <option value="أعرف">أعرف الطريقة</option>
+                            <option value="أحتاج شرح">أحتاج شرح بسيط</option>
+                            <option value="لا أعرف">لا أعرف</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn playstation-submit" id="btn-playstation">
+                        إرسال الطلب
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج الاكسبوكس -->
+    <section class="page" id="page-form-xbox">
+        <div class="form-container xbox">
+            <div class="form-header">
+                <div class="form-icon">🎯</div>
+                <h2 class="form-title">تقديم لاعبي اكسبوكس</h2>
+                <span class="form-badge xbox-badge">Xbox One / Series</span>
+            </div>
+            <div class="form-body">
+                <form id="form-xbox" onsubmit="handleSubmit(event, 'xbox')">
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">Gamertag</label>
+                        <input type="text" class="form-input" name="gamertag" required placeholder="معرفك في اكسبوكس">
+                    </div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">العمر</label>
+                        <input type="number" class="form-input" name="age" id="age-xbox" required min="8" max="99" placeholder="عمرك" onchange="checkAge('xbox')">
+                    </div>
+                    <div class="age-alert" id="alert-xbox">
+                        ⚠️ تنبيه: العمر أقل من 13 سنة - يتطلب موافقة ولي الأمر
+                    </div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">نوع الاكسبوكس</label>
+                        <select class="form-select" name="console" required>
+                            <option value="">اختر...</option>
+                            <option value="Xbox One">Xbox One</option>
+                            <option value="Series S">Xbox Series S</option>
+                            <option value="Series X">Xbox Series X</option>
+                        </select>
+                    </div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">Game Pass</label>
+                        <select class="form-select" name="gamePass" required>
+                            <option value="">اختر...</option>
+                            <option value="Ultimate">Ultimate</option>
+                            <option value="عادي">عادي</option>
+                            <option value="لا">لا</option>
+                        </select>
+                    </div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">نبذة عنك</label>
+                        <textarea class="form-textarea" name="about" rows="3" required placeholder="اخبرنا عن نفسك..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn xbox-submit" id="btn-xbox">
+                        إرسال الطلب
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج الكمبيوتر -->
+    <section class="page" id="page-form-pc">
+        <div class="form-container pc">
+            <div class="form-header">
+                <div class="form-icon">🖥️</div>
+                <h2 class="form-title">تقديم لاعبي الكمبيوتر</h2>
+                <span class="form-badge pc-badge">Windows 10/11</span>
+            </div>
+            <div class="form-body">
+                <form id="form-pc" onsubmit="handleSubmit(event, 'pc')">
+                    <div class="form-group pc-form">
+                        <label class="form-label required">اسم المستخدم</label>
+                        <input type="text" class="form-input" name="mcName" required placeholder="اسمك في ماين كرافت">
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">العمر</label>
+                        <input type="number" class="form-input" name="age" id="age-pc" required min="8" max="99" placeholder="عمرك" onchange="checkAge('pc')">
+                    </div>
+                    <div class="age-alert" id="alert-pc">
+                        ⚠️ تنبيه: العمر أقل من 13 سنة - يتطلب موافقة ولي الأمر
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">الإصدار</label>
+                        <select class="form-select" name="edition" required>
+                            <option value="">اختر...</option>
+                            <option value="Bedrock">Bedrock</option>
+                            <option value="Java">Java</option>
+                            <option value="كلاهما">كلاهما</option>
+                        </select>
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">مواصفات الجهاز</label>
+                        <select class="form-select" name="specs" required>
+                            <option value="">اختر...</option>
+                            <option value="عالية">عالية</option>
+                            <option value="متوسطة">متوسطة</option>
+                            <option value="منخفضة">منخفضة</option>
+                        </select>
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">Discord</label>
+                        <input type="text" class="form-input" name="discord" required placeholder="Username#0000">
+                    </div>
+                    <button type="submit" class="submit-btn pc-submit" id="btn-pc">
+                        إرسال الطلب
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- نتيجة النجاح -->
+    <section class="page" id="page-success">
+        <div class="result-container success">
+            <div class="result-icon">🎉</div>
+            <h2 class="result-title">تم إرسال طلبك!</h2>
+            <p class="result-text">
+                طلبك وصل للإدارة بنجاح.<br>
+                سيتم مراجعته والرد عليك في أقرب وقت عبر الديسكورد.
+            </p>
+            <button class="btn-secondary" onclick="goHome()">
+                العودة للرئيسية
+            </button>
+        </div>
+    </section>
+
+    <!-- نتيجة الخطأ -->
+    <section class="page" id="page-error">
+        <div class="result-container reject">
+            <div class="result-icon">⚠️</div>
+            <h2 class="result-title">حدث خطأ</h2>
+            <p class="result-text" id="error-text">
+                لم يتم إرسال الطلب. يرجى المحاولة مرة أخرى أو التواصل مع الإدارة.
+            </p>
+            <button class="btn-secondary" onclick="retrySubmit()">
+                إعادة المحاولة
+            </button>
+        </div>
+    </section>
+
+    <!-- تحميل -->
+    <div class="loader-overlay" id="loader">
+        <div class="spinner"></div>
+        <p>جاري الإرسال...</p>
+    </div>
+
+    <!-- إشعار -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════
+        // إعدادات Discord Webhook - استبدل هذا الرابط برابطك
+        // ═══════════════════════════════════════════════════════
+        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1472911384793583637/_0RUKULCHXS-bfqHN5K3TA8Ae3ujxC3sMBzDwHEh-dEKVsSDXFtlA7CHFSLKy_8tXQjT';
+        
+        // ═══════════════════════════════════════════════════════
+        // متغيرات النظام
+        // ═══════════════════════════════════════════════════════
+        let currentForm = null;
+        let currentPlatform = null;
+        let formData = null;
+
+        // ═══════════════════════════════════════════════════════
+        // التنقل بين الصفحات
+        // ═══════════════════════════════════════════════════════
+        function goToPage(pageId) {
+            // إخفاء جميع الصفحات
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // إظهار الصفحة المطلوبة
+            const target = document.getElementById('page-' + pageId);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo(0, 0);
+            }
+            
+            currentForm = pageId.startsWith('form-') ? pageId.replace('form-', '') : null;
+        }
+
+        function goHome() {
+            goToPage('home');
+            // إعادة تعيين النماذج
+            document.querySelectorAll('form').forEach(form => form.reset());
+            document.querySelectorAll('.age-alert').forEach(alert => alert.classList.remove('show'));
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // التحقق من العمر
+        // ═══════════════════════════════════════════════════════
+        function checkAge(platform) {
+            const input = document.getElementById('age-' + platform);
+            const alert = document.getElementById('alert-' + platform);
+            
+            if (!input || !alert) return;
+            
+            const age = parseInt(input.value);
+            if (age < 13) {
+                alert.classList.add('show');
+            } else {
+                alert.classList.remove('show');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // عرض الإشعارات
+        // ═══════════════════════════════════════════════════════
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.borderColor = type === 'error' ? 'var(--danger)' : 'var(--mobile)';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // عرض/إخفاء التحميل
+        // ═══════════════════════════════════════════════════════
+        function showLoader(show) {
+            const loader = document.getElementById('loader');
+            if (show) {
+                loader.classList.add('active');
+            } else {
+                loader.classList.remove('active');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // تعطيل/تفعيل الزر
+        // ═══════════════════════════════════════════════════════
+        function setButtonState(platform, enabled) {
+            const btn = document.getElementById('btn-' + platform);
+            if (btn) {
+                btn.disabled = !enabled;
+                btn.textContent = enabled ? 'إرسال الطلب' : 'جاري الإرسال...';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // جمع بيانات النموذج
+        // ═══════════════════════════════════════════════════════
+        function collectFormData(form) {
+            const data = {};
+            const formData = new FormData(form);
+            
+            formData.forEach((value, key) => {
+                data[key] = value.trim();
+            });
+            
+            // إضافة معلومات إضافية
+            data.platform = currentPlatform;
+            data.timestamp = new Date().toLocaleString('ar-SA');
+            data.userAgent = navigator.userAgent.substring(0, 50);
+            
+            return data;
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // إنشاء Embed للديسكورد
+        // ═══════════════════════════════════════════════════════
+        function createDiscordEmbed(data) {
+            const colors = {
+                mobile: 0x00e676,
+                playstation: 0x0066cc,
+                xbox: 0x00bc00,
+                pc: 0xff6d00
+            };
+
+            const platformNames = {
+                mobile: '📱 الجوال',
+                playstation: '🎮 بلايستيشن',
+                xbox: '🎯 اكسبوكس',
+                pc: '🖥️ كمبيوتر'
+            };
+
+            // ترتيب الحقول بشكل منطقي
+            const fieldOrder = {
+                mobile: ['playerName', 'age', 'xboxTag', 'device', 'experience', 'reason'],
+                playstation: ['psnName', 'age', 'console', 'discord', 'serverKnowledge'],
+                xbox: ['gamertag', 'age', 'console', 'gamePass', 'about'],
+                pc: ['mcName', 'age', 'edition', 'specs', 'discord']
+            };
+
+            const fields = [];
+            const order = fieldOrder[data.platform] || Object.keys(data).filter(k => !['platform', 'timestamp', 'userAgent'].includes(k));
+            
+            order.forEach(key => {
+                if (data[key]) {
+                    let name = key;
+                    let value = data[key];
+                    
+                    // ترجمة أسماء الحقول
+                    const translations = {
+                        playerName: '👤 الاسم',
+                        age: '🎂 العمر',
+                        xboxTag: '🆔 Xbox Tag',
+                        device: '📱 الجهاز',
+                        experience: '🎮 الخبرة',
+                        reason: '💬 السبب',
+                        psnName: '🆔 PSN',
+                        console: '🎮 المنصة',
+                        discord: '💬 Discord',
+                        serverKnowledge: '🔗 معرفة السيرفرات',
+                        gamertag: '🆔 Gamertag',
+                        gamePass: '🎫 Game Pass',
+                        about: '💬 نبذة',
+                        mcName: '👤 الاسم',
+                        edition: '💿 الإصدار',
+                        specs: '⚙️ المواصفات'
+                    };
+                    
+                    name = translations[key] || key;
+                    
+                    fields.push({
+                        name: name,
+                        value: String(value).substring(0, 1000),
+                        inline: ['age', 'device', 'console', 'gamePass', 'edition', 'specs'].includes(key)
+                    });
+                }
+            });
+
+            return {
+                title: `🎮 طلب انضمام جديد - ${platformNames[data.platform]}`,
+                color: colors[data.platform],
+                fields: fields,
+                footer: {
+                    text: `ID: ${Date.now().toString(36)} | ${data.timestamp}`
+                },
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // إرسال للديسكورد مع معالجة الأخطاء المحسّنة
+        // ═══════════════════════════════════════════════════════
+        async function sendToDiscord(embed) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 ثواني timeout
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ embeds: [embed] }),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                return { success: true };
+                
+            } catch (error) {
+                clearTimeout(timeoutId);
+                
+                if (error.name === 'AbortError') {
+                    throw new Error('انتهى الوقت - تأكد من الاتصال بالإنترنت');
+                }
+                
+                if (error.message.includes('Failed to fetch')) {
+                    throw new Error('لا يمكن الاتصال بالخادم - تحقق من الرابط');
+                }
+                
+                throw error;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // معالجة الإرسال الرئيسية
+        // ═══════════════════════════════════════════════════════
+        async function handleSubmit(event, platform) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const btn = form.querySelector('button[type="submit"]');
+            
+            // التحقق من صحة النموذج
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // منع الإرسال المزدوج
+            if (btn.disabled) return;
+            
+            setButtonState(platform, false);
+            showLoader(true);
+
+            try {
+                // جمع البيانات
+                formData = collectFormData(form);
+                currentPlatform = platform;
+                
+                // إنشاء وإرسال الـ Embed
+                const embed = createDiscordEmbed(formData);
+                await sendToDiscord(embed);
+                
+                // النجاح
+                showLoader(false);
+                goToPage('success');
+                showToast('✅ تم إرسال الطلب بنجاح');
+                
+                // إعادة تعيين النموذج بعد فترة
+                setTimeout(() => {
+                    form.reset();
+                    document.querySelectorAll('.age-alert').forEach(a => a.classList.remove('show'));
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showLoader(false);
+                setButtonState(platform, true);
+                
+                // عرض صفحة الخطأ مع التفاصيل
+                document.getElementById('error-text').textContent = 
+                    `خطأ: ${error.message}. يرجى المحاولة مرة أخرى أو التواصل مع الإدارة.`;
+                goToPage('error');
+                showToast('❌ فشل الإرسال', 'error');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // إعادة المحاولة
+        // ═══════════════════════════════════════════════════════
+        function retrySubmit() {
+            if (currentForm) {
+                goToPage('form-' + currentForm);
+            } else {
+                goHome();
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // تحديث عداد اللاعبين
+        // ═══════════════════════════════════════════════════════
+        function updatePlayerCount() {
+            const el = document.getElementById('onlineCount');
+            if (!el) return;
+            
+            let count = parseInt(el.textContent);
+            const change = Math.floor(Math.random() * 5) - 2;
+            count = Math.max(100, Math.min(200, count + change));
+            el.textContent = count;
+        }
+        setInterval(updatePlayerCount, 8000);
+
+        // ═══════════════════════════════════════════════════════
+        // معالجة الأخطاء العامة
+        // ═══════════════════════════════════════════════════════
+        window.onerror = function(msg, url, line) {
+            console.error(`Error: ${msg} at line ${line}`);
+            showToast('حدث خطأ غير متوقع', 'error');
+            return true;
+        };
+
+        window.onunhandledrejection = function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            showToast('حدث خطأ في الاتصال', 'error');
+        };
+
+        // ═══════════════════════════════════════════════════════
+        // اختصارات لوحة المفاتيح
+        // ═══════════════════════════════════════════════════════
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const activePage = document.querySelector('.page.active');
+                if (activePage && activePage.id !== 'page-home') {
+                    if (activePage.id.startsWith('page-form-')) {
+                        goToPage('platforms');
+                    } else {
+                        goHome();
+                    }
+                }
+            }
+        });
+
+        // ═══════════════════════════════════════════════════════
+        // تهيئة الصفحة
+        // ═══════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('✅ نظام التقديم جاهز');
+            
+            // التحقق من صحة رابط الويبهوك
+            if (WEBHOOK_URL.includes('YOUR_WEBHOOK') || WEBHOOK_URL === '') {
+                console.warn('⚠️ تحذير: رابط Discord Webhook غير مضبوط!');
+                showToast('⚠️ رابط الويبهوك غير مضبوط - contact admin');
+            }
+        });
+    </script>
+</body>
+</html>
