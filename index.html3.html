@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تقديم سيرفر ماين كرافت - كرافت ليجيندز</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mobile: #00e676;
+            --playstation: #0066cc;
+            --xbox: #00bc00;
+            --pc: #ff6d00;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #0a0a0f;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* خلفية متطورة */
+        .universe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background: 
+                radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%),
+                linear-gradient(to bottom, rgba(0,0,0,0) 0%, #000 100%);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 5s ease-in-out infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .nebula {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 230, 118, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 102, 204, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 188, 0, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 60% 60%, rgba(255, 109, 0, 0.1) 0%, transparent 40%);
+            filter: blur(80px);
+            animation: nebulaMove 20s ease infinite;
+        }
+
+        @keyframes nebulaMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        /* شريط التنقل العلوي */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-small {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--mobile), var(--playstation));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(20px);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #00e676;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00e676;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* الصفحة الرئيسية */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+            border: 1px solid rgba(255,215,0,0.3);
+            color: #ffd700;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+            50% { box-shadow: 0 0 40px rgba(255,215,0,0.5); }
+        }
+
+        .main-logo {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0,230,118,0.4) 0%, transparent 70%);
+            filter: blur(40px);
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        }
+
+        .logo-box {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.5),
+                inset 0 0 60px rgba(255,255,255,0.05);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        .server-title {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #00e676 50%, #0066cc 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 5s ease infinite;
+            letter-spacing: -3px;
+        }
+
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .server-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255,255,255,0.6);
+            max-width: 600px;
+            margin-bottom: 50px;
+            line-height: 1.8;
+        }
+
+        .features-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .feature-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .feature-chip:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-3px);
+        }
+
+        .cta-button {
+            padding: 25px 70px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #00e676, #0066cc);
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 20px 40px rgba(0,230,118,0.3);
+            font-family: 'Tajawal', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,230,118,0.4);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* اختيار المنصة */
+        .platform-section {
+            display: none;
+            min-height: 100vh;
+            padding: 120px 20px 60px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .section-desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 1.2rem;
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .platform-card {
+            background: var(--glass);
+            border: 2px solid transparent;
+            border-radius: 30px;
+            padding: 50px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card-glow {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0;
+            transition: opacity 0.4s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .platform-card:hover .card-glow {
+            opacity: 0.6;
+        }
+
+        .platform-card.mobile { border-color: var(--mobile); }
+        .platform-card.mobile .card-glow { background: var(--mobile); }
+        .platform-card.mobile:hover { 
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(0, 230, 118, 0.3);
+        }
+
+        .platform-card.playstation { border-color: var(--playstation); }
+        .platform-card.playstation .card-glow { background: var(--playstation); }
+        .platform-card.playstation:hover { 
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(0, 102, 204, 0.3);
+        }
+
+        .platform-card.xbox { border-color: var(--xbox); }
+        .platform-card.xbox .card-glow { background: var(--xbox); }
+        .platform-card.xbox:hover { 
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(0, 188, 0, 0.3);
+        }
+
+        .platform-card.pc { border-color: var(--pc); }
+        .platform-card.pc .card-glow { background: var(--pc); }
+        .platform-card.pc:hover { 
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(255, 109, 0, 0.3);
+        }
+
+        .platform-icon-wrap {
+            width: 100px;
+            height: 100px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 25px;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s;
+        }
+
+        .platform-card:hover .platform-icon-wrap {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .mobile .platform-icon-wrap { background: linear-gradient(135deg, rgba(0,230,118,0.2), rgba(0,230,118,0.05)); }
+        .playstation .platform-icon-wrap { background: linear-gradient(135deg, rgba(0,102,204,0.2), rgba(0,102,204,0.05)); }
+        .xbox .platform-icon-wrap { background: linear-gradient(135deg, rgba(0,188,0,0.2), rgba(0,188,0,0.05)); }
+        .pc .platform-icon-wrap { background: linear-gradient(135deg, rgba(255,109,0,0.2), rgba(255,109,0,0.05)); }
+
+        .platform-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .platform-type {
+            color: rgba(255,255,255,0.6);
+            font-size: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* النماذج */
+        .form-section {
+            display: none;
+            min-height: 100vh;
+            padding: 120px 20px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .form-header {
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-icon-main {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+        }
+
+        .mobile .form-icon-main { background: linear-gradient(135deg, var(--mobile), rgba(0,230,118,0.3)); }
+        .playstation .form-icon-main { background: linear-gradient(135deg, var(--playstation), rgba(0,102,204,0.3)); }
+        .xbox .form-icon-main { background: linear-gradient(135deg, var(--xbox), rgba(0,188,0,0.3)); }
+        .pc .form-icon-main { background: linear-gradient(135deg, var(--pc), rgba(255,109,0,0.3)); }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .form-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .mobile-badge { background: rgba(0,230,118,0.15); color: var(--mobile); }
+        .playstation-badge { background: rgba(0,102,204,0.15); color: var(--playstation); }
+        .xbox-badge { background: rgba(0,188,0,0.15); color: var(--xbox); }
+        .pc-badge { background: rgba(255,109,0,0.15); color: var(--pc); }
+
+        .form-body {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .required::after {
+            content: ' *';
+            color: #ff4444;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 1rem;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            background: rgba(0,0,0,0.4);
+            transform: translateY(-2px);
+        }
+
+        .mobile-form .form-input:focus, .mobile-form .form-select:focus { border-color: var(--mobile); box-shadow: 0 0 20px rgba(0,230,118,0.2); }
+        .playstation-form .form-input:focus, .playstation-form .form-select:focus { border-color: var(--playstation); box-shadow: 0 0 20px rgba(0,102,204,0.2); }
+        .xbox-form .form-input:focus, .xbox-form .form-select:focus { border-color: var(--xbox); box-shadow: 0 0 20px rgba(0,188,0,0.2); }
+        .pc-form .form-input:focus, .pc-form .form-select:focus { border-color: var(--pc); box-shadow: 0 0 20px rgba(255,109,0,0.2); }
+
+        .warning-box {
+            display: none;
+            background: linear-gradient(135deg, rgba(255,193,7,0.15), rgba(255,193,7,0.05));
+            border: 1px solid rgba(255,193,7,0.4);
+            color: #ffc107;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s;
+            font-family: 'Tajawal', sans-serif;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mobile-submit { background: linear-gradient(135deg, var(--mobile), #00b248); color: #000; }
+        .playstation-submit { background: linear-gradient(135deg, var(--playstation), #004499); color: white; }
+        .xbox-submit { background: linear-gradient(135deg, var(--xbox), #008f00); color: white; }
+        .pc-submit { background: linear-gradient(135deg, var(--pc), #e65100); color: white; }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        /* رسائل النجاح والرفض */
+        .result-section {
+            display: none;
+            min-height: 100vh;
+            padding: 120px 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 60px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(20px);
+            animation: scaleIn 0.5s;
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .result-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .result-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .result-text {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .whatsapp-box {
+            background: linear-gradient(135deg, rgba(37,211,102,0.15), rgba(37,211,102,0.05));
+            border: 1px solid rgba(37,211,102,0.4);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .whatsapp-label {
+            color: #25d366;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .whatsapp-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #25d366;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .action-btn {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+
+        /* ألوان النتائج */
+        .success-card .result-icon { color: #00e676; }
+        .success-card .result-title { color: #00e676; }
+        .reject-card .result-icon { color: #ff5252; }
+        .reject-card .result-title { color: #ff5252; }
+
+        /* أزرار التنقل */
+        .nav-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+            z-index: 1001;
+            display: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        /* لوحة الإدارة */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 40px;
+            z-index: 2000;
+            backdrop-filter: blur(30px);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .application-info {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .app-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .app-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .admin-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .admin-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .accept-btn {
+            background: linear-gradient(135deg, #00e676, #00b248);
+            color: white;
+        }
+
+        .reject-btn {
+            background: linear-gradient(135deg, #ff5252, #d32f2f);
+            color: white;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1999;
+            backdrop-filter: blur(5px);
+        }
+
+        /* تحميل */
+        .loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3000;
+        }
+
+        .loader-circle {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #00e676;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* إشعار */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 20px 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            z-index: 4000;
+            opacity: 0;
+            transition: all 0.4s;
+            font-weight: 600;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* تحسينات الأداء */
+        .gpu-accelerated {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        @media (max-width: 768px) {
+            .server-title { font-size: 2.8rem; }
+            .section-title { font-size: 2rem; }
+            .platforms-grid { grid-template-columns: 1fr; }
+            .result-card { padding: 40px 25px; }
+            .top-bar { padding: 15px 20px; }
+            .form-body { padding: 25px; }
+        }
+
+        /* إخفاء العناصر غير المرئية */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- خلفيات -->
+    <div class="universe"></div>
+    <div class="stars"></div>
+    <div class="nebula"></div>
+
+    <!-- شريط علوي -->
+    <div class="top-bar">
+        <div class="logo-small">
+            <div class="logo-icon">🌙</div>
+            <span>Ramadan Craft </span>
+        </div>
+        <div class="status-pill">
+            <div class="status-dot"></div>
+            <span>المطورين<span id="playerCount">16</span> لاعب</span>
+        </div>
+    </div>
+
+    <!-- زر الرجوع -->
+    <button class="nav-btn" id="backBtn" onclick="goBack()">← رجوع</button>
+
+    <!-- الصفحة الرئيسية -->
+    <section class="hero" id="hero">
+        <div class="hero-badge">سيرفر رمضاني</div>
+        
+        <div class="main-logo">
+            <div class="logo-glow"></div>
+            <div class="logo-box">🌙️</div>
+        </div>
+
+        <h1 class="server-title">Ramadan Craft </h1>
+        <p class="server-subtitle">
+            انضم إلى أفضل تجربة ماين كرافت بيدروك في المنطقة. عالم مفتوح، قصص لا تُنسى، ومجتمع استثنائي ينتظرك.
+        </p>
+
+        <div class="features-row">
+            <div class="feature-chip">⚡ أداء سلس</div>
+            <div class="feature-chip">🛡️ حماية قوية</div>
+            <div class="feature-chip">🎉 فعاليات يومية</div>
+            <div class="feature-chip">👥 مجتمع ودي</div>
+        </div>
+
+        <button class="cta-button" onclick="showPlatforms()">ابدأ رحلتك الآن 🚀</button>
+    </section>
+
+    <!-- اختيار المنصة -->
+    <section class="platform-section" id="platformSection">
+        <div class="section-header">
+            <h2 class="section-title">اختر منصتك</h2>
+            <p class="section-desc">دعم كامل لجميع المنصات - العب من أي مكان</p>
+        </div>
+
+        <div class="platforms-grid">
+            <div class="platform-card mobile gpu-accelerated" onclick="showForm('mobile')">
+                <div class="card-glow"></div>
+                <div class="platform-icon-wrap">📱</div>
+                <div class="platform-name">الجوال</div>
+                <div class="platform-type">ماين كرافت الجيب</div>
+            </div>
+
+            <div class="platform-card playstation gpu-accelerated" onclick="showForm('playstation')">
+                <div class="card-glow"></div>
+                <div class="platform-icon-wrap">🎮</div>
+                <div class="platform-name">بلايستيشن</div>
+                <div class="platform-type">PS4 & PS5</div>
+            </div>
+
+            <div class="platform-card xbox gpu-accelerated" onclick="showForm('xbox')">
+                <div class="card-glow"></div>
+                <div class="platform-icon-wrap">🎯</div>
+                <div class="platform-name">اكسبوكس</div>
+                <div class="platform-type">One & Series X|S</div>
+            </div>
+
+            <div class="platform-card pc gpu-accelerated" onclick="showForm('pc')">
+                <div class="card-glow"></div>
+                <div class="platform-icon-wrap">🖥️</div>
+                <div class="platform-name">الكمبيوتر</div>
+                <div class="platform-type">ويندوز 10/11</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج الجوال -->
+    <section class="form-section" id="mobileForm">
+        <div class="form-card mobile">
+            <div class="form-header">
+                <div class="form-icon-main">📱</div>
+                <h2 class="form-title">تقديم لاعبي الجوال</h2>
+                <span class="form-badge mobile-badge">ماين كرافت الجيب</span>
+            </div>
+            <div class="form-body">
+                <form onsubmit="submitApplication(event, 'mobile')">
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">الاسم في اللعبة</label>
+                        <input type="text" class="form-input" name="playerName" required placeholder="اكتب اسمك في ماين كرافت">
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">العمر</label>
+                        <input type="number" class="form-input" name="age" id="mobileAge" required min="8" max="99" placeholder="عمرك الحقيقي" onchange="checkAge('mobile')">
+                    </div>
+                    <div class="warning-box" id="mobileWarning">⚠️ تنبيه: العمر أقل من 13 سنة - يتطلب موافقة ولي الأمر</div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">رقم الواتساب</label>
+                        <input type="tel" class="form-input" name="whatsapp" required placeholder="مثال: 966501234567" pattern="[0-9]{10,15}">
+                        <small style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">سيتم إرسال نتيجة التقديم لهذا الرقم</small>
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">حساب Xbox Live</label>
+                        <input type="text" class="form-input" name="xboxTag" required placeholder="الإيميل أو الـ Gamertag">
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">خبرة اللعب</label>
+                        <select class="form-select" name="experience" required>
+                            <option value="">اختر مستواك...</option>
+                            <option value="مبتدئ">مبتدئ (أقل من سنة)</option>
+                            <option value="متوسط">متوسط (1-3 سنوات)</option>
+                            <option value="خبير">خبير (أكثر من 3 سنوات)</option>
+                        </select>
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">الوقت المتاح يومياً</label>
+                        <select class="form-select" name="timeAvailable" required>
+                            <option value="">اختر...</option>
+                            <option value="ساعة أو أقل">ساعة أو أقل</option>
+                            <option value="1-3 ساعات">1-3 ساعات</option>
+                            <option value="3-5 ساعات">3-5 ساعات</option>
+                            <option value="أكثر من 5 ساعات">أكثر من 5 ساعات</option>
+                        </select>
+                    </div>
+                    <div class="form-group mobile-form">
+                        <label class="form-label required">لماذا تريد الانضمام؟</label>
+                        <textarea class="form-textarea" name="reason" rows="4" required placeholder="اخبرنا عن نفسك وما الذي يميزك..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn mobile-submit">إرسال الطلب</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج البلايستيشن -->
+    <section class="form-section" id="playstationForm">
+        <div class="form-card playstation">
+            <div class="form-header">
+                <div class="form-icon-main">🎮</div>
+                <h2 class="form-title">تقديم لاعبي بلايستيشن</h2>
+                <span class="form-badge playstation-badge">PS4 / PS5</span>
+            </div>
+            <div class="form-body">
+                <form onsubmit="submitApplication(event, 'playstation')">
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">اسم PSN</label>
+                        <input type="text" class="form-input" name="psnName" required placeholder="معرفك في البلايستيشن">
+                    </div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">العمر</label>
+                        <input type="number" class="form-input" name="age" id="psAge" required min="8" max="99" placeholder="عمرك" onchange="checkAge('playstation')">
+                    </div>
+                    <div class="warning-box" id="psWarning">⚠️ تنبيه: العمر أقل من 13 سنة - يتطلب موافقة ولي الأمر</div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">رقم الواتساب</label>
+                        <input type="tel" class="form-input" name="whatsapp" required placeholder="966501234567" pattern="[0-9]{10,15}">
+                        <small style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">سيتم إرسال نتيجة التقديم لهذا الرقم</small>
+                    </div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">هل تستخدم Discord؟</label>
+                        <select class="form-select" name="discord" required>
+                            <option value="">اختر...</option>
+                            <option value="نعم بشكل يومي">نعم بشكل يومي</option>
+                            <option value="أحياناً">أحياناً</option>
+                            <option value="يمكنني تحميله">يمكنني تحميله</option>
+                            <option value="لا أستطيع">لا أستطيع</option>
+                        </select>
+                    </div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">معرفة إضافة السيرفرات</label>
+                        <select class="form-select" name="serverKnowledge" required>
+                            <option value="">اختر...</option>
+                            <option value="أعرف الطريقة جيداً">أعرف الطريقة جيداً</option>
+                            <option value="أحتاج شرح بسيط">أحتاج شرح بسيط</option>
+                            <option value="لا أعرف">لا أعرف</option>
+                        </select>
+                    </div>
+                    <div class="form-group playstation-form">
+                        <label class="form-label required">جودة الاتصال</label>
+                        <select class="form-select" name="connection" required>
+                            <option value="">اختر...</option>
+                            <option value="فايبر/5G ممتاز">فايبر/5G (ممتاز)</option>
+                            <option value="4G/DSL جيد">4G/DSL (جيد)</option>
+                            <option value="متوسط">متوسط</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn playstation-submit">إرسال الطلب</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج الاكسبوكس -->
+    <section class="form-section" id="xboxForm">
+        <div class="form-card xbox">
+            <div class="form-header">
+                <div class="form-icon-main">🎯</div>
+                <h2 class="form-title">تقديم لاعبي اكسبوكس</h2>
+                <span class="form-badge xbox-badge">Xbox One / Series</span>
+            </div>
+            <div class="form-body">
+                <form onsubmit="submitApplication(event, 'xbox')">
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">Gamertag</label>
+                        <input type="text" class="form-input" name="gamertag" required placeholder="معرفك في اكسبوكس">
+                    </div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">العمر</label>
+                        <input type="number" class="form-input" name="age" id="xboxAge" required min="8" max="99" placeholder="عمرك" onchange="checkAge('xbox')">
+                    </div>
+                    <div class="warning-box" id="xboxWarning">⚠️ تنبيه: العمر أقل من 13 سنة - يتطلب موافقة ولي الأمر</div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">رقم الواتساب</label>
+                        <input type="tel" class="form-input" name="whatsapp" required placeholder="966501234567" pattern="[0-9]{10,15}">
+                        <small style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">سيتم إرسال نتيجة التقديم لهذا الرقم</small>
+                    </div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">هل لديك Game Pass؟</label>
+                        <select class="form-select" name="gamePass" required>
+                            <option value="">اختر...</option>
+                            <option value="Ultimate">Game Pass Ultimate</option>
+                            <option value="عادي">Game Pass عادي</option>
+                            <option value="لا">لا</option>
+                        </select>
+                    </div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">خبرة ماين كرافت</label>
+                        <select class="form-select" name="experience" required>
+                            <option value="">اختر...</option>
+                            <option value="قديم (منذ Bedrock)">قديم (منذ Bedrock)</option>
+                            <option value="متوسط الخبرة">متوسط الخبرة</option>
+                            <option value="جديد نسبياً">جديد نسبياً</option>
+                        </select>
+                    </div>
+                    <div class="form-group xbox-form">
+                        <label class="form-label required">نبذة عنك</label>
+                        <textarea class="form-textarea" name="about" rows="4" required placeholder="اخبرنا عن نفسك..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn xbox-submit">إرسال الطلب</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج الكمبيوتر -->
+    <section class="form-section" id="pcForm">
+        <div class="form-card pc">
+            <div class="form-header">
+                <div class="form-icon-main">🖥️</div>
+                <h2 class="form-title">تقديم لاعبي الكمبيوتر</h2>
+                <span class="form-badge pc-badge">Windows 10/11</span>
+            </div>
+            <div class="form-body">
+                <form onsubmit="submitApplication(event, 'pc')">
+                    <div class="form-group pc-form">
+                        <label class="form-label required">اسم المستخدم في ماين كرافت</label>
+                        <input type="text" class="form-input" name="mcName" required placeholder="اسمك في اللعبة">
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">العمر</label>
+                        <input type="number" class="form-input" name="age" id="pcAge" required min="8" max="99" placeholder="عمرك" onchange="checkAge('pc')">
+                    </div>
+                    <div class="warning-box" id="pcWarning">⚠️ تنبيه: العمر أقل من 13 سنة - يتطلب موافقة ولي الأمر</div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">رقم الواتساب</label>
+                        <input type="tel" class="form-input" name="whatsapp" required placeholder="966501234567" pattern="[0-9]{10,15}">
+                        <small style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">سيتم إرسال نتيجة التقديم لهذا الرقم</small>
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">الإصدار</label>
+                        <select class="form-select" name="edition" required>
+                            <option value="">اختر...</option>
+                            <option value="Bedrock">Bedrock Edition</option>
+                            <option value="Java">Java Edition</option>
+                            <option value="كلاهما">كلاهما</option>
+                        </select>
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">مواصفات الجهاز</label>
+                        <select class="form-select" name="specs" required>
+                            <option value="">اختر...</option>
+                            <option value="عالية">عالية (تشغيل shaders)</option>
+                            <option value="متوسطة">متوسطة (لعب سلس)</option>
+                            <option value="منخفضة">منخفضة (لكن تعمل)</option>
+                        </select>
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">خبرة الرول بلاي</label>
+                        <select class="form-select" name="rpExp" required>
+                            <option value="">اختر...</option>
+                            <option value="خبير">خبير (سيرفرات كثيرة)</option>
+                            <option value="متوسط">متوسط (تجربة بسيطة)</option>
+                            <option value="مبتدئ">مبتدئ (أول مرة)</option>
+                        </select>
+                    </div>
+                    <div class="form-group pc-form">
+                        <label class="form-label required">Discord Tag</label>
+                        <input type="text" class="form-input" name="discord" required placeholder="User#1234">
+                    </div>
+                    <button type="submit" class="submit-btn pc-submit">إرسال الطلب</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- نتيجة القبول -->
+    <section class="result-section" id="successResult">
+        <div class="result-card success-card">
+            <div class="result-icon">🎉</div>
+            <h2 class="result-title">تم قبولك!</h2>
+            <p class="result-text">
+                مبروك! طلبك تم قبوله بنجاح.<br>
+                تم إرسال رسالة التأكيد إلى رقم الواتساب الخاص بك.<br>
+                انضم إلى سيرفرنا وابدأ مغامرتك الآن!
+            </p>
+            <div class="whatsapp-box">
+                <span class="whatsapp-label">📱 تم إرسال التفاصيل إلى:</span>
+                <div class="whatsapp-number" id="successWhatsApp">+966 50 123 4567</div>
+            </div>
+            <button class="action-btn" onclick="resetAll()">العودة للرئيسية</button>
+        </div>
+    </section>
+
+    <!-- نتيجة الرفض -->
+    <section class="result-section" id="rejectResult">
+        <div class="result-card reject-card">
+            <div class="result-icon">😔</div>
+            <h2 class="result-title">تم رفض الطلب</h2>
+            <p class="result-text">
+                للأسف، لم يتم قبول طلبك هذه المرة.<br>
+                يمكنك التقديم مرة أخرى بعد 7 أيام.<br>
+                تم إرسال سبب الرفض إلى رقم الواتساب الخاص بك.
+            </p>
+            <div class="whatsapp-box">
+                <span class="whatsapp-label">📱 تم إرسال التفاصيل إلى:</span>
+                <div class="whatsapp-number" id="rejectWhatsApp">+966 50 123 4567</div>
+            </div>
+            <button class="action-btn" onclick="resetAll()">العودة للرئيسية</button>
+        </div>
+    </section>
+
+    <!-- لوحة الإدارة (للاختبار) -->
+    <div class="overlay" id="adminOverlay" onclick="closeAdmin()"></div>
+    <div class="admin-panel" id="adminPanel">
+        <h3 class="admin-title">🛡️ لوحة مراجعة الطلب</h3>
+        <div class="application-info" id="appInfo">
+            <!-- يتم ملؤها بالجافاسكربت -->
+        </div>
+        <div class="admin-actions">
+            <button class="admin-btn accept-btn" onclick="processApplication(true)">✅ قبول</button>
+            <button class="admin-btn reject-btn" onclick="processApplication(false)">❌ رفض</button>
+        </div>
+    </div>
+
+    <!-- تحميل -->
+    <div class="loader" id="loader">
+        <div class="loader-circle"></div>
+    </div>
+
+    <!-- إشعار -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // منع الأخطاء والتحسينات
+        'use strict';
+        
+        // متغيرات عامة
+        let currentApplication = null;
+        let currentPlatform = null;
+
+        // تحديث عداد اللاعبين (محسّن)
+        const updateCounter = () => {
+            const el = document.getElementById('playerCount');
+            if (!el) return;
+            let count = parseInt(el.textContent);
+            count += Math.floor(Math.random() * 5) - 2;
+            count = Math.max(80, Math.min(250, count));
+            el.textContent = count;
+        };
+        setInterval(updateCounter, 5000);
+
+        // التنقل بين الصفحات
+        const showPlatforms = () => {
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('platformSection').style.display = 'flex';
+            document.getElementById('backBtn').style.display = 'block';
+        };
+
+        const showForm = (platform) => {
+            document.getElementById('platformSection').style.display = 'none';
+            document.getElementById(platform + 'Form').style.display = 'block';
+            currentPlatform = platform;
+        };
+
+        const goBack = () => {
+            const sections = ['platformSection', 'mobileForm', 'playstationForm', 'xboxForm', 'pcForm'];
+            let visible = null;
+            
+            for (const id of sections) {
+                const el = document.getElementById(id);
+                if (el && (el.style.display === 'flex' || el.style.display === 'block')) {
+                    visible = id;
+                    break;
+                }
+            }
+
+            if (visible === 'platformSection') {
+                document.getElementById('platformSection').style.display = 'none';
+                document.getElementById('hero').style.display = 'flex';
+                document.getElementById('backBtn').style.display = 'none';
+            } else if (visible && visible !== 'platformSection') {
+                document.getElementById(visible).style.display = 'none';
+                document.getElementById('platformSection').style.display = 'flex';
+            }
+        };
+
+        const resetAll = () => {
+            const ids = ['successResult', 'rejectResult', 'mobileForm', 'playstationForm', 'xboxForm', 'pcForm'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            document.getElementById('hero').style.display = 'flex';
+            document.getElementById('backBtn').style.display = 'none';
+            
+            // إعادة تعيين النماذج
+            document.querySelectorAll('form').forEach(form => form.reset());
+        };
+
+        // التحقق من العمر
+        const checkAge = (platform) => {
+            const ageInput = document.getElementById(platform + 'Age');
+            const warning = document.getElementById(platform + 'Warning');
+            if (!ageInput || !warning) return;
+            
+            const age = parseInt(ageInput.value);
+            warning.style.display = age < 13 ? 'block' : 'none';
+        };
+
+        // إظهار الإشعارات
+        const showToast = (message, type = 'info') => {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            
+            toast.textContent = message;
+            toast.className = 'toast show';
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
+
+        // إظهار التحميل
+        const showLoader = (show) => {
+            const loader = document.getElementById('loader');
+            if (loader) loader.style.display = show ? 'block' : 'none';
+        };
+
+        // إرسال الطلب
+        const submitApplication = async (event, platform) => {
+            event.preventDefault();
+            showLoader(true);
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {
+                platform: platform,
+                timestamp: new Date().toLocaleString('ar-SA'),
+                id: 'APP-' + Date.now()
+            };
+
+            formData.forEach((value, key) => data[key] = value);
+            currentApplication = data;
+
+            // محاكاة إرسال للديسكورد
+            const webhookUrl = 'https://discord.com/api/webhooks/1472911384793583637/_0RUKULCHXS-bfqHN5K3TA8Ae3ujxC3sMBzDwHEh-dEKVsSDXFtlA7CHFSLKy_8tXQjT';
+            
+            const colors = {
+                mobile: 0x00e676,
+                playstation: 0x0066cc,
+                xbox: 0x00bc00,
+                pc: 0xff6d00
+            };
+
+            const embed = {
+                title: `🎮 طلب جديد - ${platform}`,
+                color: colors[platform],
+                fields: Object.entries(data).map(([k, v]) => ({
+                    name: k,
+                    value: String(v).substring(0, 1000),
+                    inline: true
+                })),
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ embeds: [embed] }),
+                    mode: 'no-cors'
+                });
+            } catch (e) {
+                console.log('Webhook:', e);
+            }
+
+            showLoader(false);
+            
+            // إظهار لوحة الإدارة للاختبار (في الواقع يتم المراجعة من الديسكورد)
+            setTimeout(() => showAdminPanel(data), 500);
+        };
+
+        // لوحة الإدارة (محاكاة)
+        const showAdminPanel = (data) => {
+            const panel = document.getElementById('adminPanel');
+            const overlay = document.getElementById('adminOverlay');
+            const info = document.getElementById('appInfo');
+            
+            if (!panel || !overlay || !info) return;
+
+            info.innerHTML = Object.entries(data)
+                .filter(([k]) => !['timestamp', 'id', 'platform'].includes(k))
+                .map(([k, v]) => `
+                    <div class="app-row">
+                        <span style="color: rgba(255,255,255,0.6)">${k}</span>
+                        <span style="font-weight: 600">${v}</span>
+                    </div>
+                `).join('');
+
+            panel.style.display = 'block';
+            overlay.style.display = 'block';
+        };
+
+        const closeAdmin = () => {
+            const panel = document.getElementById('adminPanel');
+            const overlay = document.getElementById('adminOverlay');
+            if (panel) panel.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+        };
+
+        const processApplication = (accepted) => {
+            closeAdmin();
+            
+            if (!currentApplication) return;
+
+            const whatsapp = currentApplication.whatsapp;
+            const cleanNumber = whatsapp.replace(/\D/g, '');
+            
+            // إظهار النتيجة
+            if (accepted) {
+                document.getElementById('successWhatsApp').textContent = '+' + cleanNumber;
+                document.getElementById('successResult').style.display = 'flex';
+                
+                // محاكاة إرسال واتساب (في الواقع يتم عبر API)
+                console.log(`إرسال قبول إلى: ${cleanNumber}`);
+                showToast('✅ تم إرسال رسالة القبول إلى الواتساب');
+            } else {
+                document.getElementById('rejectWhatsApp').textContent = '+' + cleanNumber;
+                document.getElementById('rejectResult').style.display = 'flex';
+                
+                console.log(`إرسال رفض إلى: ${cleanNumber}`);
+                showToast('❌ تم إرسال رسالة الرفض إلى الواتساب');
+            }
+
+            // إخفاء النماذج
+            document.getElementById(currentPlatform + 'Form').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+        };
+
+        // تحسينات الأداء
+        // إيقاف الأنيميشن عند عدم النشاط
+        let ticking = false;
+        const updateAnimations = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+
+        document.addEventListener('scroll', updateAnimations, { passive: true });
+
+        // منع التكبير على الموبايل
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+        
+        // تحسين الأداء على الأجهزة الضعيفة
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.style.setProperty('--animation-duration', '0.01ms');
+        }
+
+        // معالجة الأخطاء العامة
+        window.onerror = (msg, url, line) => {
+            console.error(`خطأ: ${msg} في السطر ${line}`);
+            showToast('حدث خطأ، يرجى المحاولة مرة أخرى');
+            return true;
+        };
+
+        // تحميل الصفحة
+        window.addEventListener('load', () => {
+            showToast('🎮 مرحباً بك في نظام التقديم');
+        });
+
+        // اختصارات لوحة المفاتيح
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const adminPanel = document.getElementById('adminPanel');
+                if (adminPanel && adminPanel.style.display === 'block') {
+                    closeAdmin();
+                } else {
+                    goBack();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
