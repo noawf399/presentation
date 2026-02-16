@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقديم سيرفر ماين كرافت</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mobile-color: #00ff88;
+            --playstation-color: #0070f3;
+            --xbox-color: #107c10;
+            --pc-color: #ff6b00;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* خلفية متحركة متطورة */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 300%;
+            height: 300%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(123, 44, 191, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 136, 0.1) 0%, transparent 40%);
+            animation: bgMove 30s ease infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-5%, -5%) rotate(1deg); }
+            66% { transform: translate(5%, 5%) rotate(-1deg); }
+        }
+
+        /* شبكة متحركة */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(60px); }
+        }
+
+        /* الصفحة الرئيسية المحسنة */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .server-logo-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .server-logo {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf, #00ff88);
+            background-size: 400% 400%;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            box-shadow: 
+                0 30px 60px rgba(0, 212, 255, 0.3),
+                0 0 100px rgba(123, 44, 191, 0.2),
+                inset 0 0 60px rgba(255,255,255,0.1);
+            animation: 
+                float 4s ease-in-out infinite,
+                gradientShift 8s ease infinite;
+            border: 3px solid rgba(255,255,255,0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 220px;
+            height: 220px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 50%;
+            animation: ringPulse 2s ease-out infinite;
+        }
+
+        .logo-ring:nth-child(2) {
+            width: 260px;
+            height: 260px;
+            animation-delay: 0.5s;
+            border-color: rgba(123, 44, 191, 0.2);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(2deg); }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes ringPulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+        }
+
+        .server-name {
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, #00d4ff, #7b2cbf, #00ff88);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGradient 5s ease infinite;
+            text-shadow: 0 0 60px rgba(0, 212, 255, 0.3);
+            letter-spacing: -2px;
+        }
+
+        @keyframes textGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .server-desc {
+            font-size: 1.4rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 50px;
+            max-width: 600px;
+            line-height: 1.8;
+        }
+
+        .features-bar {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass-bg);
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .start-btn {
+            padding: 25px 80px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 
+                0 20px 40px rgba(0, 212, 255, 0.4),
+                0 0 0 0 rgba(0, 212, 255, 0.7);
+            font-family: 'Tajawal', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 
+                0 30px 60px rgba(0, 212, 255, 0.6),
+                0 0 0 10px rgba(0, 212, 255, 0.1);
+        }
+
+        .start-btn:hover::before {
+            left: 100%;
+        }
+
+        /* اختيار المنصة المحسن */
+        .platform-selection {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.6s;
+        }
+
+        .platform-title {
+            font-size: 3rem;
+            margin-bottom: 60px;
+            text-align: center;
+            font-weight: 800;
+            background: linear-gradient(45deg, #fff, rgba(255,255,255,0.6));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .platform-card {
+            background: var(--glass-bg);
+            border-radius: 30px;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            min-height: 320px;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .platform-glow {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0;
+            transition: opacity 0.4s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .platform-card:hover .platform-glow {
+            opacity: 0.5;
+        }
+
+        /* ألوان المنصات */
+        .platform-card.mobile {
+            border-color: var(--mobile-color);
+        }
+        .platform-card.mobile .platform-glow { background: var(--mobile-color); }
+        .platform-card.mobile:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 40px 80px rgba(0, 255, 136, 0.3);
+            background: rgba(0, 255, 136, 0.08);
+        }
+
+        .platform-card.playstation {
+            border-color: var(--playstation-color);
+        }
+        .platform-card.playstation .platform-glow { background: var(--playstation-color); }
+        .platform-card.playstation:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 40px 80px rgba(0, 112, 243, 0.3);
+            background: rgba(0, 112, 243, 0.08);
+        }
+
+        .platform-card.xbox {
+            border-color: var(--xbox-color);
+        }
+        .platform-card.xbox .platform-glow { background: var(--xbox-color); }
+        .platform-card.xbox:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 40px 80px rgba(16, 124, 16, 0.3);
+            background: rgba(16, 124, 16, 0.08);
+        }
+
+        .platform-card.pc {
+            border-color: var(--pc-color);
+        }
+        .platform-card.pc .platform-glow { background: var(--pc-color); }
+        .platform-card.pc:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 40px 80px rgba(255, 107, 0, 0.3);
+            background: rgba(255, 107, 0, 0.08);
+        }
+
+        .platform-icon-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s;
+        }
+
+        .platform-card:hover .platform-icon-wrapper {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .mobile .platform-icon-wrapper { background: linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,255,136,0.05)); }
+        .playstation .platform-icon-wrapper { background: linear-gradient(135deg, rgba(0,112,243,0.2), rgba(0,112,243,0.05)); }
+        .xbox .platform-icon-wrapper { background: linear-gradient(135deg, rgba(16,124,16,0.2), rgba(16,124,16,0.05)); }
+        .pc .platform-icon-wrapper { background: linear-gradient(135deg, rgba(255,107,0,0.2), rgba(255,107,0,0.05)); }
+
+        .platform-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .platform-desc {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* النماذج المحسنة */
+        .form-container {
+            display: none;
+            min-height: 100vh;
+            padding: 60px 20px;
+            max-width: 700px;
+            margin: 0 auto;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px;
+            background: var(--glass-bg);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+        }
+
+        .form-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .form-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 2px solid;
+        }
+
+        .mobile-badge { background: rgba(0, 255, 136, 0.15); color: var(--mobile-color); border-color: var(--mobile-color); }
+        .playstation-badge { background: rgba(0, 112, 243, 0.15); color: var(--playstation-color); border-color: var(--playstation-color); }
+        .xbox-badge { background: rgba(16, 124, 16, 0.15); color: var(--xbox-color); border-color: var(--xbox-color); }
+        .pc-badge { background: rgba(255, 107, 0, 0.15); color: var(--pc-color); border-color: var(--pc-color); }
+
+        .form-content {
+            background: var(--glass-bg);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .required::after {
+            content: ' *';
+            color: #ff4444;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            background: rgba(0,0,0,0.2);
+            color: white;
+            font-size: 1.05rem;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(0,0,0,0.3);
+            transform: translateY(-2px);
+        }
+
+        .mobile-form input:focus,
+        .mobile-form select:focus,
+        .mobile-form textarea:focus { border-color: var(--mobile-color); box-shadow: 0 0 20px rgba(0,255,136,0.2); }
+
+        .playstation-form input:focus,
+        .playstation-form select:focus,
+        .playstation-form textarea:focus { border-color: var(--playstation-color); box-shadow: 0 0 20px rgba(0,112,243,0.2); }
+
+        .xbox-form input:focus,
+        .xbox-form select:focus,
+        .xbox-form textarea:focus { border-color: var(--xbox-color); box-shadow: 0 0 20px rgba(16,124,16,0.2); }
+
+        .pc-form input:focus,
+        .pc-form select:focus,
+        .pc-form textarea:focus { border-color: var(--pc-color); box-shadow: 0 0 20px rgba(255,107,0,0.2); }
+
+        .age-warning {
+            display: none;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.05));
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 22px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s;
+            font-family: 'Tajawal', sans-serif;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .mobile-submit { background: linear-gradient(135deg, var(--mobile-color), #00cc6a); color: #000; }
+        .playstation-submit { background: linear-gradient(135deg, var(--playstation-color), #0051a8); color: white; }
+        .xbox-submit { background: linear-gradient(135deg, var(--xbox-color), #0e5c0e); color: white; }
+        .pc-submit { background: linear-gradient(135deg, var(--pc-color), #cc5500); color: white; }
+
+        .submit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        /* رسالة النجاح المحسنة */
+        .success-message {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            animation: scaleIn 0.6s;
+        }
+
+        .success-container {
+            background: var(--glass-bg);
+            padding: 60px;
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            max-width: 600px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+        }
+
+        .success-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: rocketLaunch 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes rocketLaunch {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .success-text {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00ff88, #00d4ff, #7b2cbf);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 3s ease infinite;
+        }
+
+        @keyframes gradientText {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .success-subtext {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .back-btn {
+            padding: 18px 50px;
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+            transform: translateY(-3px);
+        }
+
+        /* عداد اللاعبين المحسن */
+        .player-count {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            background: var(--glass-bg);
+            padding: 15px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .online-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .online-dot {
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .online-dot::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulseRing 2s infinite;
+        }
+
+        @keyframes pulseRing {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+        }
+
+        .player-count-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* تأثيرات الجزيئات */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            animation: floatUp 15s infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* زر الرجوع */
+        .nav-back {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: none;
+        }
+
+        .nav-back:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .server-name { font-size: 2.8rem; }
+            .platform-title { font-size: 2rem; }
+            .platform-grid { grid-template-columns: 1fr; }
+            .form-header { padding: 25px; }
+            .form-header h2 { font-size: 1.8rem; }
+            .success-container { padding: 40px 25px; }
+            .success-text { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+    <div class="particles" id="particles"></div>
+
+    <button class="nav-back" id="navBack" onclick="goBack()">← رجوع</button>
+
+    <div class="player-count">
+        <div class="online-indicator">
+            <div class="online-dot"></div>
+            <span class="player-count-text">👥 <span id="onlinePlayers">156</span> لاعب متصل</span>
+        </div>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <section class="hero" id="hero">
+        <div class="server-logo-container">
+            <div class="logo-ring"></div>
+            <div class="logo-ring"></div>
+            <div class="server-logo">⛏️</div>
+        </div>
+        <h1 class="server-name">CRAFT LEGENDS</h1>
+        <p class="server-desc">
+            سيرفر بيدروك احترافي يجمع بين الرول بلاي الممتع والبقاء المثير. انضم لمجتمعنا وابدأ مغامرتك الآن!
+        </p>
+        <div class="features-bar">
+            <div class="feature-item">⚡ سيرفر سريع</div>
+            <div class="feature-item">🛡️ حماية 24/7</div>
+            <div class="feature-item">👥 مجتمع نشط</div>
+            <div class="feature-item">🎮 أحداث يومية</div>
+        </div>
+        <button class="start-btn" onclick="showPlatformSelection()">قدّم الآن 🚀</button>
+    </section>
+
+    <!-- اختيار المنصة -->
+    <section class="platform-selection" id="platformSelection">
+        <h2 class="platform-title">🎮 اختر منصتك</h2>
+        <div class="platform-grid">
+            <div class="platform-card mobile" onclick="showForm('mobile')">
+                <div class="platform-glow"></div>
+                <div class="platform-icon-wrapper">📱</div>
+                <div class="platform-name">جوال</div>
+                <div class="platform-desc">MCPE / Android / iOS</div>
+            </div>
+            <div class="platform-card playstation" onclick="showForm('playstation')">
+                <div class="platform-glow"></div>
+                <div class="platform-icon-wrapper">🎮</div>
+                <div class="platform-name">بلايستيشن</div>
+                <div class="platform-desc">PS4 / PS5</div>
+            </div>
+            <div class="platform-card xbox" onclick="showForm('xbox')">
+                <div class="platform-glow"></div>
+                <div class="platform-icon-wrapper">🎯</div>
+                <div class="platform-name">اكسبوكس</div>
+                <div class="platform-desc">Xbox One / Series X|S</div>
+            </div>
+            <div class="platform-card pc" onclick="showForm('pc')">
+                <div class="platform-glow"></div>
+                <div class="platform-icon-wrapper">🖥️</div>
+                <div class="platform-name">كمبيوتر</div>
+                <div class="platform-desc">Windows 10/11 / لابتوب</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- نموذج الجوال -->
+    <div class="form-container" id="mobileForm">
+        <div class="form-header">
+            <div class="form-icon">📱</div>
+            <h2>تقديم اللاعبين المحمول</h2>
+            <span class="platform-badge mobile-badge">Pocket Edition</span>
+        </div>
+        <div class="form-content">
+            <form id="mobileFormElement" onsubmit="submitForm(event, 'mobile')">
+                <div class="form-group mobile-form">
+                    <label class="required">الاسم في اللعبة</label>
+                    <input type="text" name="playerName" required placeholder="اكتب اسمك في ماين كرافت">
+                </div>
+                <div class="form-group mobile-form">
+                    <label class="required">العمر</label>
+                    <input type="number" name="age" id="mobileAge" required min="8" max="60" placeholder="عمرك الحقيقي" onchange="checkAge('mobile')">
+                </div>
+                <div class="age-warning" id="mobileAgeWarning">
+                    ⚠️ تنبيه: عمرك أقل من 13 سنة. سيتم مراجعة طلبك بعناية إضافية.
+                </div>
+                <div class="form-group mobile-form">
+                    <label class="required">حساب Xbox Live</label>
+                    <input type="text" name="xboxUser" required placeholder="اليوزر الخاص بك">
+                </div>
+                <div class="form-group mobile-form">
+                    <label class="required">خبرة اللعب</label>
+                    <select name="experience" required>
+                        <option value="">اختر مستواك...</option>
+                        <option value="beginner">مبتدئ (أقل من سنة)</option>
+                        <option value="intermediate">متوسط (1-3 سنوات)</option>
+                        <option value="expert">خبير (أكثر من 3 سنوات)</option>
+                    </select>
+                </div>
+                <div class="form-group mobile-form">
+                    <label class="required">الوقت المتاح يومياً</label>
+                    <select name="activityHours" required>
+                        <option value="">اختر...</option>
+                        <option value="1-2">1-2 ساعات</option>
+                        <option value="3-5">3-5 ساعات</option>
+                        <option value="5+">أكثر من 5 ساعات</option>
+                    </select>
+                </div>
+                <div class="form-group mobile-form">
+                    <label class="required">لماذا تريد الانضمام؟</label>
+                    <textarea name="reason" rows="4" required placeholder="اخبرنا عن نفسك ولماذا تريد الانضمام للسيرفر..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn mobile-submit">إرسال الطلب ✅</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نموذج البلايستيشن -->
+    <div class="form-container" id="playstationForm">
+        <div class="form-header">
+            <div class="form-icon">🎮</div>
+            <h2>تقديم لاعبي بلايستيشن</h2>
+            <span class="platform-badge playstation-badge">PS4 / PS5</span>
+        </div>
+        <div class="form-content">
+            <form id="playstationFormElement" onsubmit="submitForm(event, 'playstation')">
+                <div class="form-group playstation-form">
+                    <label class="required">اسم PSN</label>
+                    <input type="text" name="psnName" required placeholder="معرفك في البلايستيشن">
+                </div>
+                <div class="form-group playstation-form">
+                    <label class="required">العمر</label>
+                    <input type="number" name="age" id="psAge" required min="8" max="60" placeholder="عمرك" onchange="checkAge('playstation')">
+                </div>
+                <div class="age-warning" id="psAgeWarning">
+                    ⚠️ تنبيه: عمرك أقل من 13 سنة. سيتم مراجعة طلبك بعناية إضافية.
+                </div>
+                <div class="form-group playstation-form">
+                    <label class="required">هل تستخدم Discord؟</label>
+                    <select name="hasDiscord" required>
+                        <option value="">اختر...</option>
+                        <option value="yes_active">نعم، لدي حساب نشط</option>
+                        <option value="yes_can_install">يمكنني تحميله</option>
+                        <option value="no">لا أستطيع</option>
+                    </select>
+                </div>
+                <div class="form-group playstation-form">
+                    <label class="required">معرفة إضافة السيرفرات</label>
+                    <select name="serverKnowledge" required>
+                        <option value="">اختر...</option>
+                        <option value="expert">أعرف الطريقة جيداً</option>
+                        <option value="basic">أحتاج شرح بسيط</option>
+                        <option value="none">لا أعرف</option>
+                    </select>
+                </div>
+                <div class="form-group playstation-form">
+                    <label class="required">جودة الاتصال</label>
+                    <select name="connection" required>
+                        <option value="">اختر...</option>
+                        <option value="fiber">فايبر / 5G (ممتاز)</option>
+                        <option value="4g">4G / DSL (جيد)</option>
+                        <option value="3g">3G / متوسط</option>
+                    </select>
+                </div>
+                <div class="form-group playstation-form">
+                    <label class="required">تواجدك الأسبوعي</label>
+                    <select name="weeklyPresence" required>
+                        <option value="">اختر...</option>
+                        <option value="daily">يومياً</option>
+                        <option value="frequent">4-5 أيام</option>
+                        <option value="moderate">1-3 أيام</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn playstation-submit">إرسال الطلب 🚀</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نموذج الاكسبوكس -->
+    <div class="form-container" id="xboxForm">
+        <div class="form-header">
+            <div class="form-icon">🎯</div>
+            <h2>تقديم لاعبي اكسبوكس</h2>
+            <span class="platform-badge xbox-badge">Xbox One / Series</span>
+        </div>
+        <div class="form-content">
+            <form id="xboxFormElement" onsubmit="submitForm(event, 'xbox')">
+                <div class="form-group xbox-form">
+                    <label class="required">Gamertag</label>
+                    <input type="text" name="gamertag" required placeholder="معرفك في اكسبوكس">
+                </div>
+                <div class="form-group xbox-form">
+                    <label class="required">العمر</label>
+                    <input type="number" name="age" id="xboxAge" required min="8" max="60" placeholder="عمرك" onchange="checkAge('xbox')">
+                </div>
+                <div class="age-warning" id="xboxAgeWarning">
+                    ⚠️ تنبيه: عمرك أقل من 13 سنة. سيتم مراجعة طلبك بعناية إضافية.
+                </div>
+                <div class="form-group xbox-form">
+                    <label class="required">هل لديك Game Pass؟</label>
+                    <select name="gamePass" required>
+                        <option value="">اختر...</option>
+                        <option value="ultimate">Game Pass Ultimate</option>
+                        <option value="standard">Game Pass عادي</option>
+                        <option value="none">لا</option>
+                    </select>
+                </div>
+                <div class="form-group xbox-form">
+                    <label class="required">خبرة ماين كرافت</label>
+                    <select name="mcExperience" required>
+                        <option value="">اختر...</option>
+                        <option value="veteran">قديم (منذ إصدار Bedrock)</option>
+                        <option value="experienced">متوسط الخبرة</option>
+                        <option value="new">جديد نسبياً</option>
+                    </select>
+                </div>
+                <div class="form-group xbox-form">
+                    <label class="required">نشاطك في السيرفرات</label>
+                    <select name="serverActivity" required>
+                        <option value="">اختر...</option>
+                        <option value="very_active">نشط جداً (يومياً)</option>
+                        <option value="active">نشط (4-5 أيام)</option>
+                        <option value="casual">عادي (متى توفر الوقت)</option>
+                    </select>
+                </div>
+                <div class="form-group xbox-form">
+                    <label class="required">نبذة عنك</label>
+                    <textarea name="about" rows="4" required placeholder="اخبرنا عن نفسك واهتماماتك في اللعبة..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn xbox-submit">إرسال الطلب 🎯</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نموذج الكمبيوتر -->
+    <div class="form-container" id="pcForm">
+        <div class="form-header">
+            <div class="form-icon">🖥️</div>
+            <h2>تقديم لاعبي الكمبيوتر</h2>
+            <span class="platform-badge pc-badge">Windows 10/11</span>
+        </div>
+        <div class="form-content">
+            <form id="pcFormElement" onsubmit="submitForm(event, 'pc')">
+                <div class="form-group pc-form">
+                    <label class="required">اسم المستخدم في ماين كرافت</label>
+                    <input type="text" name="mcUsername" required placeholder="Java أو Bedrock اسمك في">
+                </div>
+                <div class="form-group pc-form">
+                    <label class="required">العمر</label>
+                    <input type="number" name="age" id="pcAge" required min="8" max="60" placeholder="عمرك" onchange="checkAge('pc')">
+                </div>
+                <div class="age-warning" id="pcAgeWarning">
+                    ⚠️ تنبيه: عمرك أقل من 13 سنة. سيتم مراجعة طلبك بعناية إضافية.
+                </div>
+                <div class="form-group pc-form">
+                    <label class="required">نوع الإصدار</label>
+                    <select name="edition" required>
+                        <option value="">اختر...</option>
+                        <option value="bedrock">Bedrock Edition</option>
+                        <option value="java">Java Edition</option>
+                        <option value="both">كلاهما</option>
+                    </select>
+                </div>
+                <div class="form-group pc-form">
+                    <label class="required">مواصفات الجهاز</label>
+                    <select name="specs" required>
+                        <option value="">اختر...</option>
+                        <option value="high">عالية (تشغيل shaders بسهولة)</option>
+                        <option value="medium">متوسطة (لعب سلس)</option>
+                        <option value="low">منخفضة (لكن تشتغل اللعبة)</option>
+                    </select>
+                </div>
+                <div class="form-group pc-form">
+                    <label class="required">خبرتك في الرول بلاي</label>
+                    <select name="rpExperience" required>
+                        <option value="">اختر...</option>
+                        <option value="extensive">خبير (لعبت بسيرفرات كثيرة)</option>
+                        <option value="moderate">متوسط (تجربة بسيطة)</option>
+                        <option value="beginner">مبتدئ (أول مرة)</option>
+                    </select>
+                </div>
+                <div class="form-group pc-form">
+                    <label class="required">Discord Tag</label>
+                    <input type="text" name="discordTag" required placeholder="مثال: User#1234">
+                </div>
+                <div class="form-group pc-form">
+                    <label class="required">لماذا تختار سيرفرنا؟</label>
+                    <textarea name="whyUs" rows="4" required placeholder="ما الذي يميز سيرفرنا بالنسبة لك؟"></textarea>
+                </div>
+                <button type="submit" class="submit-btn pc-submit">إرسال الطلب 💻</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- رسالة النجاح -->
+    <div class="success-message" id="successMessage">
+        <div class="success-container">
+            <div class="success-icon">🚀</div>
+            <h2 class="success-text">تم الإرسال بنجاح!</h2>
+            <p class="success-subtext">
+                طلبك وصل للإدارة وسيتم مراجعته في أقرب وقت<br>
+                <span style="color: #00ff88; font-weight: 700;">نتواصل معك قريباً!</span>
+            </p>
+            <button class="back-btn" onclick="resetForm()">العودة للرئيسية</button>
+        </div>
+    </div>
+
+    <script>
+        // إنشاء الجزيئات
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                particle.style.width = (Math.random() * 4 + 2) + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // تحديث عداد اللاعبين
+        function updatePlayerCount() {
+            const count = document.getElementById('onlinePlayers');
+            let current = parseInt(count.textContent);
+            const change = Math.floor(Math.random() * 7) - 3;
+            current += change;
+            if (current < 80) current = 80;
+            if (current > 250) current = 250;
+            count.textContent = current;
+        }
+        setInterval(updatePlayerCount, 4000);
+
+        // التنقل
+        function showPlatformSelection() {
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('platformSelection').style.display = 'flex';
+            document.getElementById('navBack').style.display = 'block';
+        }
+
+        function showForm(platform) {
+            document.getElementById('platformSelection').style.display = 'none';
+            document.getElementById(platform + 'Form').style.display = 'block';
+        }
+
+        function goBack() {
+            const sections = ['platformSelection', 'mobileForm', 'playstationForm', 'xboxForm', 'pcForm'];
+            const visible = sections.find(id => document.getElementById(id).style.display === 'flex' || document.getElementById(id).style.display === 'block');
+            
+            if (visible === 'platformSelection') {
+                document.getElementById('platformSelection').style.display = 'none';
+                document.getElementById('hero').style.display = 'flex';
+                document.getElementById('navBack').style.display = 'none';
+            } else if (visible && visible !== 'platformSelection') {
+                document.getElementById(visible).style.display = 'none';
+                document.getElementById('platformSelection').style.display = 'flex';
+            }
+        }
+
+        // التحقق من العمر
+        function checkAge(platform) {
+            const age = parseInt(document.getElementById(platform + 'Age').value);
+            const warning = document.getElementById(platform + 'AgeWarning');
+            warning.style.display = age < 13 ? 'block' : 'none';
+        }
+
+        // إرسال النموذج
+        async function submitForm(event, platform) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = { platform, timestamp: new Date().toLocaleString('ar-SA') };
+            formData.forEach((value, key) => data[key] = value);
+
+            // رابط الويبهوك - استبدله برابطك
+            const WEBHOOK_URL = 'https://discord.com/api/webhooks/1472911384793583637/_0RUKULCHXS-bfqHN5K3TA8Ae3ujxC3sMBzDwHEh-dEKVsSDXFtlA7CHFSLKy_8tXQjT';
+
+            const colors = {
+                mobile: 0x00ff88,
+                playstation: 0x0070f3,
+                xbox: 0x107c10,
+                pc: 0xff6b00
+            };
+
+            const platformNames = {
+                mobile: '📱 جوال',
+                playstation: '🎮 بلايستيشن',
+                xbox: '🎯 اكسبوكس',
+                pc: '🖥️ كمبيوتر'
+            };
+
+            const embed = {
+                title: `طلب انضمام جديد - ${platformNames[platform]}`,
+                color: colors[platform],
+                fields: Object.entries(data).map(([key, value]) => ({
+                    name: key,
+                    value: String(value),
+                    inline: true
+                })),
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ embeds: [embed] })
+                });
+            } catch (e) {
+                console.log('Webhook error:', e);
+            }
+
+            // إظهار النجاح
+            document.getElementById('mobileForm').style.display = 'none';
+            document.getElementById('playstationForm').style.display = 'none';
+            document.getElementById('xboxForm').style.display = 'none';
+            document.getElementById('pcForm').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'flex';
+            document.getElementById('navBack').style.display = 'none';
+            form.reset();
+        }
+
+        function resetForm() {
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('hero').style.display = 'flex';
+            document.getElementById('navBack').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
